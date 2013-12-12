@@ -1,6 +1,6 @@
 
 mod index {
-	pub fn or(a: ~[int], b: ~[int]) -> ~[int] {
+	pub fn or(a: &[int], b: &[int]) -> ~[int] {
 		let mut i = 0;
 		let mut j = 1;
 		let an = a.len();
@@ -46,7 +46,7 @@ mod index {
 		assert_eq!(c, ~[1, 2, 3, 4]);
 	}
 
-	fn and(a: ~[int], b: ~[int]) -> ~[int] {
+	fn and(a: &[int], b: &[int]) -> ~[int] {
 		let mut i = 0;
 		let mut j = 0;
 		let an = a.len();
@@ -86,7 +86,7 @@ mod index {
 		assert_eq!(c, ~[2, 3]);
 	}
 
-	fn except(a: ~[int], b: ~[int]) -> ~[int] {
+	fn except(a: &[int], b: &[int]) -> ~[int] {
 		let mut i = 0;
 		let mut j = 0;
 		let an = a.len();
@@ -130,7 +130,7 @@ mod index {
 		assert_eq!(c, ~[1]);
 	}
 
-	fn indexOf(list: ~[int], item: int) -> int {
+	fn indexOf(list: &[int], item: int) -> int {
 		let mut low: int = 0;
 		let mut high: int = list.len() as int - 1;
 		while low <= high {
