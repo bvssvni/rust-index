@@ -1,7 +1,7 @@
 rust-index
 ==========
 
-A Boolean algebra library on sorted vectors of ints.
+A Boolean algebra library on sorted vectors of ints.  
 MIT license
 
 ##Why?
