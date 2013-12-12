@@ -129,5 +129,39 @@ mod index {
 		let c = except(a, b);
 		assert_eq!(c, ~[1]);
 	}
+
+	fn indexOf(list: ~[int], item: int) -> int {
+		let mut low: int = 0;
+		let mut high: int = list.len() as int - 1;
+		while low <= high {
+			let i = (low + high) / 2;
+			if list[i] < item {
+				low = i + 1;
+				continue;
+			}
+			if list[i] > item {
+				high = i - 1;
+				continue;
+			}			
+
+			return i;
+		}
+
+		-(low + 1)
+	}
+
+	#[test]
+	fn test_indexOf() {
+		let a: ~[int] = ~[1, 5, 10];
+		let b = indexOf(a, 5);
+		assert_eq!(b, 1);
+	}
+
+	#[test]
+	fn test2_indexOf() {
+		let a: ~[int] = ~[1, 2, 10];
+		let b = indexOf(a, 0);
+		assert_eq!(b, -1);
+	}
 }
 
