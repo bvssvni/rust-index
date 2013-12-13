@@ -282,8 +282,16 @@ mod index {
 		let a = Index { ids: ~[~"apes", ~"banana", ~"monkey"] };
 		let b = Index { ids: ~[~"banana", ~"monkey", ~"snakes"] };
 		let c = a + b;
-		println!("{:?}", c);
 		assert_eq!(c.ids, ~[~"apes", ~"banana", ~"monkey", ~"snakes"]);
+	}
+	
+	#[test]
+	fn test_example_2() {
+		let a = Index { ids: ~[1, 2, 3] };
+		let b = Index { ids: ~[2, 3, 4] };
+		let c = Index { ids: ~[1, 4] };
+		let d = a * (b - c);
+		assert_eq!(d.ids, ~[2, 3]);
 	}
 }
 
