@@ -276,5 +276,14 @@ mod index {
 		let b = a.index_of(0);
 		assert_eq!(b, -1);
 	}
+
+	#[test]
+	fn test_strs() {
+		let a = Index { ids: ~[~"apes", ~"banana", ~"monkey"] };
+		let b = Index { ids: ~[~"banana", ~"monkey", ~"snakes"] };
+		let c = a + b;
+		println!("{:?}", c);
+		assert_eq!(c.ids, ~[~"apes", ~"banana", ~"monkey", ~"snakes"]);
+	}
 }
 
