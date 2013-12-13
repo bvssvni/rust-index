@@ -52,7 +52,7 @@ mod index {
 		assert_eq!(c, ~[1, 2, 3, 4]);
 	}
 
-	pub struct Group<T> {
+	pub struct Index<T> {
 		members: ~[T],
 	}
 
@@ -62,15 +62,15 @@ mod index {
 		fn except(&self, b: T) -> T;
 	}
 
-	impl<T:Ord+Eq+Clone> BooleanAlgebra<Group<T>> for Group<T> {
-		fn or(&self, b: Group<T>) -> Group<T> {
-			Group { members: self::or(self.members, b.members) }
+	impl<T:Ord+Eq+Clone> BooleanAlgebra<Index<T>> for Index<T> {
+		fn or(&self, b: Index<T>) -> Index<T> {
+			Index { members: self::or(self.members, b.members) }
 		}
-		fn and(&self, b: Group<T>) -> Group<T> {
-			Group { members: self::and(self.members, b.members) }
+		fn and(&self, b: Index<T>) -> Index<T> {
+			Index { members: self::and(self.members, b.members) }
 		}
-		fn except(&self, b: Group<T>) -> Group<T> {
-			Group { members: self::except(self.members, b.members) }
+		fn except(&self, b: Index<T>) -> Index<T> {
+			Index { members: self::except(self.members, b.members) }
 		}
 	}
 
@@ -78,34 +78,34 @@ mod index {
 		fn index_of(&self, item: T) -> int;
 	}
 
-	impl<T:Ord+Eq> IndexOf<T> for Group<T> {
+	impl<T:Ord+Eq> IndexOf<T> for Index<T> {
 		fn index_of(&self, item: T) -> int {
 			self::index_of(self.members, item)
 		}
 	}
 
-	impl<T:Ord+Eq+Clone> Add<Group<T>, Group<T>> for Group<T> {
-		fn add(&self, rhs: &Group<T>) -> Group<T> {
-			Group { members: or(self.members, rhs.members) }
+	impl<T:Ord+Eq+Clone> Add<Index<T>, Index<T>> for Index<T> {
+		fn add(&self, rhs: &Index<T>) -> Index<T> {
+			Index { members: or(self.members, rhs.members) }
 		}
 	}
 
-	impl<T:Ord+Eq+Clone> Mul<Group<T>, Group<T>> for Group<T> {
-		fn mul(&self, rhs: &Group<T>) -> Group<T> {
-			Group { members: and(self.members, rhs.members) }
+	impl<T:Ord+Eq+Clone> Mul<Index<T>, Index<T>> for Index<T> {
+		fn mul(&self, rhs: &Index<T>) -> Index<T> {
+			Index { members: and(self.members, rhs.members) }
 		}
 	}
 
-	impl<T:Ord+Eq+Clone> Sub<Group<T>, Group<T>> for Group<T> {
-		fn sub(&self, rhs: &Group<T>) -> Group<T> {
-			Group { members: except(self.members, rhs.members) }
+	impl<T:Ord+Eq+Clone> Sub<Index<T>, Index<T>> for Index<T> {
+		fn sub(&self, rhs: &Index<T>) -> Index<T> {
+			Index { members: except(self.members, rhs.members) }
 		}
 	}
 
 	#[test]
 	fn test_or_operator() {
-		let a = Group { members: ~[1, 2, 3] };
-		let b = Group { members: ~[2, 3, 4]} ;
+		let a = Index { members: ~[1, 2, 3] };
+		let b = Index { members: ~[2, 3, 4]} ;
 		let c = a + b;
 		assert_eq!(c.members, ~[1, 2, 3, 4]);
 		let d = a.or(b);
@@ -114,8 +114,8 @@ mod index {
 
 	#[test]
 	fn test_and_operator() {
-		let a = Group { members: ~[1, 2, 3] };
-		let b = Group { members: ~[2, 3, 4] };
+		let a = Index { members: ~[1, 2, 3] };
+		let b = Index { members: ~[2, 3, 4] };
 		let c = a * b;
 		assert_eq!(c.members, ~[2, 3]);
 		let d = a.and(b);
@@ -124,8 +124,8 @@ mod index {
 
 	#[test]
 	fn test_except_operator() {
-		let a = Group { members: ~[1, 2, 3] };
-		let b = Group { members: ~[2, 3, 4] };
+		let a = Index { members: ~[1, 2, 3] };
+		let b = Index { members: ~[2, 3, 4] };
 		let c = a - b;
 		assert_eq!(c.members, ~[1]);
 		let d = a.except(b);
@@ -134,9 +134,9 @@ mod index {
 
 	#[test]
 	fn test_advanced() {
-		let a = Group { members: ~[1, 5, 8] };
-		let b = Group { members: ~[0, 1, 5] };
-		let c = Group { members: ~[0, 1, 5, 8] };
+		let a = Index { members: ~[1, 5, 8] };
+		let b = Index { members: ~[0, 1, 5] };
+		let c = Index { members: ~[0, 1, 5, 8] };
 		let d = a + b - c;
 		assert_eq!(d.members, ~[]);
 	}
@@ -257,8 +257,8 @@ mod index {
 	}
 
 	#[test]
-	fn test_index_of_group() {
-		let a = Group { members: ~[1, 5, 10] };
+	fn test_index_of_Index() {
+		let a = Index { members: ~[1, 5, 10] };
 		let b = a.index_of(5);
 		assert_eq!(b, 1);
 	}
@@ -271,8 +271,8 @@ mod index {
 	}
 
 	#[test]
-	fn test2_index_of_group() {
-		let a = Group { members: ~[1, 2, 10] };
+	fn test2_index_of_Index() {
+		let a = Index { members: ~[1, 2, 10] };
 		let b = a.index_of(0);
 		assert_eq!(b, -1);
 	}
