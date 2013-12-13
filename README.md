@@ -4,12 +4,20 @@ rust-index
 A Boolean algebra library for indexing.  
 MIT license
 
-###Example
+###Example 1
 
     let a = Index { ids: ~[~"apes", ~"banana", ~"monkey"] };
     let b = Index { ids: ~[~"banana", ~"monkey", ~"snakes"] };
-    let c = a + b; // take the or/union operation as if the indexes were sets.
+    let c = a + b;
     assert_eq!(c.ids, ~[~"apes", ~"banana", ~"monkey", ~"snakes"]);
+
+###Example 2
+
+    let a = Index { ids: ~[1, 2, 3] };
+    let b = Index { ids: ~[2, 3, 4] };
+    let c = Index { ids: ~[1, 4] };
+    let d = a * (b - c);
+    assert_eq!(d.ids, ~[2, 3]);
 
 ###To run unit tests:
 
