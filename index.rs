@@ -46,6 +46,61 @@ mod index {
 		assert_eq!(c, ~[1, 2, 3, 4]);
 	}
 
+	pub struct Group {
+		members: ~[int],
+	}
+
+	impl Add<Group, Group> for Group {
+		fn add(&self, rhs: &Group) -> Group {
+			Group { members: or(self.members, rhs.members) }
+		}
+	}
+
+	impl Mul<Group, Group> for Group {
+		fn mul(&self, rhs: &Group) -> Group {
+			Group { members: and(self.members, rhs.members) }
+		}
+	}
+
+	impl Sub<Group, Group> for Group {
+		fn sub(&self, rhs: &Group) -> Group {
+			Group { members: except(self.members, rhs.members) }
+		}
+	}
+
+	#[test]
+	fn test_or_operator() {
+		let a = Group { members: ~[1, 2, 3] };
+		let b = Group { members: ~[2, 3, 4]} ;
+		let c = a + b;
+		assert_eq!(c.members, ~[1, 2, 3, 4]);
+	}
+
+	#[test]
+	fn test_and_operator() {
+		let a = Group { members: ~[1, 2, 3] };
+		let b = Group { members: ~[2, 3, 4] };
+		let c = a * b;
+		assert_eq!(c.members, ~[2, 3]);
+	}
+
+	#[test]
+	fn test_except_operator() {
+		let a = Group { members: ~[1, 2, 3] };
+		let b = Group { members: ~[2, 3, 4] };
+		let c = a - b;
+		assert_eq!(c.members, ~[1]);
+	}
+
+	#[test]
+	fn test_advanced() {
+		let a = Group { members: ~[1, 5, 8] };
+		let b = Group { members: ~[0, 1, 5] };
+		let c = Group { members: ~[0, 1, 5, 8] };
+		let d = a + b - c;
+		assert_eq!(d.members, ~[]);
+	}
+
 	fn and(a: &[int], b: &[int]) -> ~[int] {
 		let mut i = 0;
 		let mut j = 0;
