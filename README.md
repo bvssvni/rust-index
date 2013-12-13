@@ -1,25 +1,18 @@
 rust-index
 ==========
 
-A Boolean algebra library on sorted vectors of ints.  
+A Boolean algebra library for index/group operations.  
 MIT license
-
-##Why?
-
-A sorted vector of ints can represent a selection of another vector.  
-With Boolean algebra you can combine the sorted vectors with the set operations:
-
-    index::or (union)
-    index::and (intersect)
-    index::except (difference)
 
 ###Example
 
-    let waiting = // get the customers waiting
-    let bored = // get the bored customers
-    let recently_arrived = // get the recently arrived customers
-    let waiting_and_bored = index::and(waiting, bored);
-    let impatient = index::except(waiting_and_bored, recently_arrived);
+    let humans = Group { members: ~[4, 5] };
+    let animals = Group { members: ~[1, 2, 3] };
+    let in_the_jungle = Group { members: ~[2, 3, 4] };
+    // Create new groups using Boolean algebra.
+    let animals_in_the_jungle = animals * in_the_jungle;
+    let animals_outside_the_jungle = animals - in_the_jungle;
+    let humans_or_animals = humans + animals;
 
 To run unit tests:
 
