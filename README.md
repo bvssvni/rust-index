@@ -1,20 +1,29 @@
 rust-index
 ==========
 
-A Boolean algebra library for index/group operations.  
+A Boolean algebra library for indexing.  
 MIT license
 
 ###Example
 
-    let humans = Group { members: ~[4, 5] };
-    let animals = Group { members: ~[1, 2, 3] };
-    let in_the_jungle = Group { members: ~[2, 3, 4] };
-    // Create new groups using Boolean algebra.
-    let animals_in_the_jungle = animals * in_the_jungle;
-    let animals_outside_the_jungle = animals - in_the_jungle;
-    let humans_or_animals = humans + animals;
+    let a = Index { ids: ~[~"apes", ~"banana", ~"monkey"] };
+    let b = Index { ids: ~[~"banana", ~"monkey", ~"snakes"] };
+    let c = a + b; // take the or/union operation as if the indexes were sets.
+    assert_eq!(c.ids, ~[~"apes", ~"banana", ~"monkey", ~"snakes"]);
 
-To run unit tests:
+###To run unit tests:
 
     make test
     
+###Requirements
+
+* The indexes must be sorted in ascending order.  
+* The index type must implement std::cmp::Ord, std::cmp::Eq and std::clone::Clone.
+
+###Subtraction
+
+Always put subtractions at the end of the expression.  
+This is necessary to get correct precedence order.
+
+    let a = b - c + e; // WRONG: c will not subtract e.
+    let a = b + e - c; // RIGHT: c will subtract e.
