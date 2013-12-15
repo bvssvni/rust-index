@@ -4,20 +4,37 @@ rust-index
 A Boolean algebra library for indexing.  
 MIT license
 
-###Example 1
+###Import Namespace
 
-    let a = ::index::new( ~[~"apes", ~"banana", ~"monkey"] );
-    let b = ::index::new( ~[~"banana", ~"monkey", ~"snakes"] );
+    mod index;
+    use index::Index;
+
+###Example 1 - Sorted strs
+
+    let a = Index::new( ~[~"apes", ~"banana", ~"monkey"] );
+    let b = Index::new( ~[~"banana", ~"monkey", ~"snakes"] );
     let c = a + b;
-    assert_eq!(::index::to_vec(c), ~[~"apes", ~"banana", ~"monkey", ~"snakes"]);
+    assert_eq!(c.to_vec(), ~[~"apes", ~"banana", ~"monkey", ~"snakes"]);
 
-###Example 2
+###Example 2 - Sorted ints
 
-    let a = ::index::new( ~[1, 2, 3] );
-    let b = ::index::new( ~[2, 3, 4] );
-    let c = ::index::new( ~[1, 4] );
+    let a = Index::new( ~[1, 2, 3] );
+    let b = Index::new( ~[2, 3, 4] );
+    let c = Index::new( ~[1, 4] );
     let d = a * (b - c);
-    assert_eq!(::index::to_vec(d), ~[2, 3]);
+    assert_eq!(d.to_vec(), ~[2, 3]);
+
+###Example 3 - Found
+
+    let a = Index::new( ~[1, 5, 10] );
+    let b = a.index_of(5);
+    assert_eq!(b, ::index::Found(1));
+
+###Example 4 - FoundLarger
+
+    let a = Index::new( ~[1, 2, 10] );
+    let b = a.index_of(0);
+    assert_eq!(b, ::index::FoundLarger(0));
 
 ###To run unit tests:
 
