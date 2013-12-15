@@ -146,8 +146,13 @@ mod index {
 		result
 	}
 
+	#[deriving(Eq)]
+	pub enum IndexOf {
+		Found(int),
+		Next(int)
+	}
 	
-	pub fn index_of<T:Ord+Eq>(ind: Index<T>, item: T) -> int {
+	pub fn index_of<T:Ord+Eq>(ind: Index<T>, item: T) -> IndexOf {
 		let list = ind.ids;
 		let mut low: int = 0;
 		let mut high: int = list.len() as int - 1;
@@ -162,10 +167,12 @@ mod index {
 				continue;
 			}			
 
-			return i;
+			// return i;
+			return Found(i);
 		}
 
-		-(low + 1)
+		// -(low + 1)
+		Next(low)
 	}
 }
 
@@ -208,14 +215,14 @@ mod tests {
 	fn test_index_of_Index() {
 		let a = ::index::new( ~[1, 5, 10] );
 		let b = ::index::index_of(a, 5);
-		assert_eq!(b, 1);
+		assert_eq!(b, ::index::Found(1));
 	}
 
 	#[test]
 	fn test2_index_of_Index() {
 		let a = ::index::new( ~[1, 2, 10] );
 		let b = ::index::index_of(a, 0);
-		assert_eq!(b, -1);
+		assert_eq!(b, ::index::Next(0));
 	}
 
 	#[test]
