@@ -15,21 +15,11 @@ mod index {
 		pub fn new(data: ~[T]) -> Index<T> { Index { ids: data } }
 
 		pub fn new_check_order(data: ~[T]) -> Option<Index<T>> {
-			let n = data.len();
-			if n == 0 { return Some(Index{ ids: data }); }
-
-			let mut a = data[0].clone();
-			let mut i = 0;
-			while i < n {
-				if data[i] < a {
-					return None;
-				}
-
-				a = data[i].clone();
-				i += 1;
+			if data.windows(2).any(|w| w[0] > w[1]) {
+				None
+			} else {
+				Some(Index { ids: data })
 			}
-			
-			Some(Index { ids: data })
 		}
 
 		pub fn to_vec(&self) -> ~[T] { self.ids.clone() }
@@ -265,6 +255,15 @@ mod tests {
 		match Index::new_check_order( ~[1, 3, 2] ) {
 			Some(_) => fail!("Expected the order to be wrong"),
 			_ => return
+		}
+	}
+
+	#[test]
+	fn test_new_check_order_empty() {
+		let a: ~[int] = ~[];
+		match Index::new_check_order( a ) {
+			None => fail!("Did not expected none"),
+			Some(x) => assert_eq!(x.to_vec().len(), 0)
 		}
 	}
 }
