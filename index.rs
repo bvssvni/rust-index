@@ -11,8 +11,29 @@ mod index {
 	}
 
 	impl<T: Clone + Ord + Eq> Index<T> {
+
 		pub fn new(data: ~[T]) -> Index<T> { Index { ids: data } }
+
+		pub fn new_check_order(data: ~[T]) -> Option<Index<T>> {
+			let n = data.len();
+			if n == 0 { return Some(Index{ ids: data }); }
+
+			let mut a = data[0].clone();
+			let mut i = 0;
+			while i < n {
+				if data[i] < a {
+					return None;
+				}
+
+				a = data[i].clone();
+				i += 1;
+			}
+			
+			Some(Index { ids: data })
+		}
+
 		pub fn to_vec(&self) -> ~[T] { self.ids.clone() }
+
 		pub fn index_of(&self, item: T) -> IndexMatch {
 			let list = &self.ids;
 			let mut low: int = 0;
@@ -237,6 +258,14 @@ mod tests {
 		let c = Index::new( ~[1, 4] );
 		let d = a * (b - c);
 		assert_eq!(d.to_vec(), ~[2, 3]);
+	}
+
+	#[test]
+	fn test_new_check_order() {
+		match Index::new_check_order( ~[1, 3, 2] ) {
+			Some(_) => fail!("Expected the order to be wrong"),
+			_ => return
+		}
 	}
 }
 
