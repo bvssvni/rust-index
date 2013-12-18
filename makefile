@@ -1,15 +1,18 @@
 
-COMPILER ?= rustc
-SOURCES = index.rs
+LIB = src/lib.rs
+TESTS = src/tests.rs
 
-all: index
+all: lib
 
-test: index
-	./index
+test: lib $(TESTS)
+	rustc --test $(TESTS) -o bin/tests -L bin/ && ./bin/tests
 
-index: $(SOURCES)
-	rustc --test $(SOURCES) -o index
+lib: $(LIB)
+	rustc $(LIB) --out-dir bin/
+
+doc: $(LIB)
+	rustdoc $(LIB)
 
 clean:
-	rm index
+	rm bin/*
 
