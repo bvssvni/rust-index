@@ -91,3 +91,11 @@ fn test_new_check_order_sort_retry() {
 	assert!(ordered);
 }
 
+#[test]
+fn test_ownership() {
+	let a = Index::new( ~[1, 2, 3] );
+	let ref b = a;
+	assert_eq!(a.to_vec(), ~[1, 2, 3]);
+	assert_eq!(b.to_vec(), ~[1, 2, 3]);
+}
+
