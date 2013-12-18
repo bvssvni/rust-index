@@ -3,13 +3,16 @@
 #[crate_type="rlib"];
 
 #[deny(non_camel_case_types)];
-// #[deny(missing_doc)];
+#[deny(missing_doc)];
 
 //! Boolean algebra library for indexing.
 
+/// Is returned by 'index_of'.
 #[deriving(Eq)]
 pub enum IndexMatch {
+	/// Item found at index.
 	Found(int),
+	/// Item not found, but can be inserted at index.
 	FoundLarger(int)
 }
 
@@ -23,16 +26,20 @@ pub struct Index<T> {
 impl<T: Clone + Ord + Eq> Index<T> {
 
 	/// Constructs a new Index without checking the order.
-	/// If you experience bugs in your calculations,
-	/// test by changing 'new' to 'new_with_order'.
+	/// This method takes ownership of the vector.
 	pub fn new(data: ~[T]) -> Index<T> { Index { ids: data } }
 
+	/// Checks that each item in vector is larger than previous one.
 	pub fn check_order(data: &~[T]) -> bool {
 		!data.windows(2).any(|w| w[0] >= w[1])
 	}
 
+	/// Clones the vector.
 	pub fn to_vec(&self) -> ~[T] { self.ids.clone() }
 
+	/// Returns Found(i) if the item was found in the Index.
+	/// Returns FoundNext(i), the index to insert, if the item was not found.
+	/// Worst case performance: O(N).	
 	pub fn index_of(&self, item: T) -> IndexMatch {
 		let list = &self.ids;
 		let mut low: int = 0;
@@ -55,18 +62,21 @@ impl<T: Clone + Ord + Eq> Index<T> {
 	}
 }
 
+/// Creates a new Index containing all items from both arguments.
 impl<T: Ord + Eq + Clone> Add<Index<T>, Index<T>> for Index<T> {
 	fn add(&self, rhs: &Index<T>) -> Index<T> {
 		Index { ids: or(self.ids, rhs.ids) }
 	}
 }
 
+/// Creates a new Index containing items from both arguments.
 impl<T: Ord + Eq + Clone> Mul<Index<T>, Index<T>> for Index<T> {
 	fn mul(&self, rhs: &Index<T>) -> Index<T> {
 		Index { ids: and(self.ids, rhs.ids) }
 	}
 }
 
+/// Creates a new Index containing items from the left argument but not the second.
 impl<T: Ord + Eq + Clone> Sub<Index<T>, Index<T>> for Index<T> {
 	fn sub(&self, rhs: &Index<T>) -> Index<T> {
 		Index { ids: except(self.ids, rhs.ids) }
