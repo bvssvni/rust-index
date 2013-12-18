@@ -13,20 +13,22 @@ pub enum IndexMatch {
 	FoundLarger(int)
 }
 
+/// Index is a struct used for doing algebraic set operations.
+/// It contains a hidden vector of the type 'T'.
+/// The items are sorted in ascending order.
 pub struct Index<T> {
 	priv ids: ~[T],
 }
 
 impl<T: Clone + Ord + Eq> Index<T> {
 
+	/// Constructs a new Index without checking the order.
+	/// If you experience bugs in your calculations,
+	/// test by changing 'new' to 'new_with_order'.
 	pub fn new(data: ~[T]) -> Index<T> { Index { ids: data } }
 
-	pub fn new_check_order(data: ~[T]) -> Option<Index<T>> {
-		if data.windows(2).any(|w| w[0] > w[1]) {
-			None
-		} else {
-			Some(Index { ids: data })
-		}
+	pub fn check_order(data: &~[T]) -> bool {
+		!data.windows(2).any(|w| w[0] >= w[1])
 	}
 
 	pub fn to_vec(&self) -> ~[T] { self.ids.clone() }

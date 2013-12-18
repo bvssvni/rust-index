@@ -69,19 +69,25 @@ fn test_example_2() {
 
 #[test]
 fn test_new_check_order() {
-	match Index::new_check_order( ~[1, 3, 2] ) {
-		Some(_) => fail!("Expected the order to be wrong"),
-		_ => return
-	}
+	assert!(!Index::check_order( &~[1, 3, 2] ));
 }
 
 #[test]
 fn test_new_check_order_empty() {
 	let a: ~[int] = ~[];
-	match Index::new_check_order( a ) {
-		None => fail!("Did not expected none"),
-		Some(x) => assert_eq!(x.to_vec().len(), 0)
-	}
+	assert!(Index::check_order(&a));
 }
 
+#[test]
+fn test_new_check_order_sort_retry() {
+	let mut a = ~[1, 3, 2];
+	let ordered = Index::check_order(&a);	
+	assert!(!ordered);	
+	if !ordered {
+		a.swap(1, 2);
+	}
+
+	let ordered = Index::check_order(&a);
+	assert!(ordered);
+}
 
