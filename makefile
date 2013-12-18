@@ -7,8 +7,11 @@ all: lib
 test: lib $(TESTS)
 	rustc --test $(TESTS) -o bin/tests -L bin/ && ./bin/tests
 
-lib: $(LIB)
+lib: $(LIB) bin
 	rustc $(LIB) --out-dir bin/
+
+bin:
+	mkdir bin
 
 doc: $(LIB)
 	rustdoc $(LIB)
