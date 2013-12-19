@@ -11,9 +11,9 @@
 #[deriving(Eq)]
 pub enum IndexMatch {
 	/// Item found at index.
-	Found(int),
+	Found(uint),
 	/// Item not found, but can be inserted at index.
-	FoundLarger(int)
+	FoundLarger(uint)
 }
 
 /// Index is a struct used for doing algebraic set operations.
@@ -40,25 +40,38 @@ impl<T: Clone + Ord + Eq> Index<T> {
 	/// Returns Found(i) if the item was found in the Index.
 	/// Returns FoundNext(i), the index to insert, if the item was not found.
 	/// Worst case performance: O(N).	
-	pub fn index_of(&self, item: T) -> IndexMatch {
+	pub fn index_of(&self, item: &T) -> IndexMatch {
 		let list = &self.ids;
+		let n = list.len() as int;
+		if n == 0 { return FoundLarger(0u); }
 		let mut low: int = 0;
-		let mut high: int = list.len() as int - 1;
+		let mut high: int = n - 1;
 		while low <= high {
-			let i = (low + high) / 2;
-			if list[i] < item {
+			let i: int = (low + high) / 2;
+			if list[i] < *item {
 				low = i + 1;
 				continue;
 			}
-			if list[i] > item {
+			if list[i] > *item {
 				high = i - 1;
 				continue;
-			}			
+			}	
 
-			return Found(i);
+			return Found(i as uint);
 		}
 
-		FoundLarger(low)
+		FoundLarger(low as uint)
+	}
+
+	/// Inserts a new item.
+	pub fn insert(&mut self, item: T) -> bool {
+		match self.index_of(&item) {
+			Found(_) => false,
+			FoundLarger(i) => {
+				self.ids.insert(i, item);
+				true
+			},
+		}
 	}
 }
 

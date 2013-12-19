@@ -36,16 +36,24 @@ fn test_advanced() {
 }
 
 #[test]
-fn test_index_of_Index() {
+fn test_index_of() {
 	let a = Index::new( ~[1, 5, 10] );
-	let b = a.index_of(5);
+	let b = a.index_of(&5);
 	assert_eq!(b, ::index::Found(1));
 }
 
 #[test]
-fn test2_index_of_Index() {
+fn test2_index_of() {
 	let a = Index::new( ~[1, 2, 10] );
-	let b = a.index_of(0);
+	let b = a.index_of(&0);
+	assert_eq!(b, ::index::FoundLarger(0));
+}
+
+#[test]
+fn test3_index_of() {
+	let list = ~[];
+	let a = Index::new( list );
+	let b = a.index_of(&5);
 	assert_eq!(b, ::index::FoundLarger(0));
 }
 
@@ -97,5 +105,19 @@ fn test_ownership() {
 	let ref b = a;
 	assert_eq!(a.to_vec(), ~[1, 2, 3]);
 	assert_eq!(b.to_vec(), ~[1, 2, 3]);
+}
+
+#[test]
+fn test_insert() {
+	let mut a = Index::new( ~[1, 2, 3] );
+	a.insert(4);
+	assert_eq!(a.to_vec(), ~[1, 2, 3, 4]);
+}
+
+#[test]
+fn test2_insert() {
+	let mut a = Index::new( ~[1, 3, 4] );
+	a.insert(2);
+	assert_eq!(a.to_vec(), ~[1, 2, 3, 4]);
 }
 
