@@ -5,7 +5,10 @@ TESTS = src/tests.rs
 all: lib
 
 test: lib $(TESTS)
-	rustc --test $(TESTS) -o bin/tests -L bin/ && ./bin/tests
+	rustc --opt-level=3 --test $(TESTS) -o bin/tests -L bin/ && ./bin/tests
+
+bench: lib $(TESTS)
+	rustc --opt-level=3 --test $(TESTS) -o bin/tests -L bin/ && ./bin/tests --bench
 
 lib: $(LIB) bin
 	rustc $(LIB) --out-dir bin/

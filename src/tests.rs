@@ -1,3 +1,5 @@
+extern mod extra;
+
 extern mod index;
 
 #[test]
@@ -108,5 +110,26 @@ fn test2_insert() {
 	let mut a = ~[1, 3, 4];
 	index::insert(&mut a, 2);
 	assert_eq!(a, ~[1, 2, 3, 4]);
+}
+
+#[bench]
+fn bench_or(b: &mut extra::test::BenchHarness) {
+    b.iter(|| {
+		test_or_operator();
+	} );
+}
+
+#[bench]
+fn bench_and(b: &mut extra::test::BenchHarness) {
+    b.iter(|| {
+		test_and_operator();
+	} );
+}
+
+#[bench]
+fn bench_except(b: &mut extra::test::BenchHarness) {
+    b.iter(|| {
+		test_except_operator();
+	} );
 }
 
