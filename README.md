@@ -4,36 +4,44 @@ rust-index
 A Boolean algebra library for indexing.  
 MIT license
 
+##Introduction
+
+Sometimes it is useful to treat vectors as sets.
+If the vector is sorted, one can use an algorithm that takes the least element from each and produces a set.
+The worst case for this is O(N), but it is fast for other reasons:
+
+1. The data is layed out sequential in memory, which makes it predictable for code optimization.  
+2. Few heap allocations are required.  
+
 ###Import Namespace
 
     mod index;
-    use index::Index;
 
 ###Example 1 - Sorted strs
 
-    let a = Index::new( ~[~"apes", ~"banana", ~"monkey"] );
-    let b = Index::new( ~[~"banana", ~"monkey", ~"snakes"] );
-    let c = a + b;
-    assert_eq!(c.to_vec(), ~[~"apes", ~"banana", ~"monkey", ~"snakes"]);
+    let a = ~[~"apes", ~"banana", ~"monkey"];
+    let b = ~[~"banana", ~"monkey", ~"snakes"];
+    let c = index::or(a, b);
+    assert_eq!(c, ~[~"apes", ~"banana", ~"monkey", ~"snakes"]);
 
 ###Example 2 - Sorted ints
 
-    let a = Index::new( ~[1, 2, 3] );
-    let b = Index::new( ~[2, 3, 4] );
-    let c = Index::new( ~[1, 4] );
-    let d = a * (b - c);
-    assert_eq!(d.to_vec(), ~[2, 3]);
+    let a = ~[1, 2, 3];
+    let b = ~[2, 3, 4];
+    let c = ~[1, 4];
+    let d = index::except(index::and(a, b), c);
+    assert_eq!(d, ~[2, 3]);
 
 ###Example 3 - Found
 
-    let a = Index::new( ~[1, 5, 10] );
-    let b = a.index_of(5);
+    let a = ~[1, 5, 10];
+    let b = index::index_of(a, &5);
     assert_eq!(b, ::index::Found(1));
 
 ###Example 4 - FoundLarger
 
-    let a = Index::new( ~[1, 2, 10] );
-    let b = a.index_of(0);
+    let a = ~[1, 2, 10];
+    let b = index::index_of(a, &0);
     assert_eq!(b, ::index::FoundLarger(0));
 
 ###To run unit tests:
@@ -44,11 +52,3 @@ MIT license
 
 * The index data must be sorted in ascending order.  
 * The index type must implement std::cmp::Ord, std::cmp::Eq and std::clone::Clone.
-
-###Subtraction
-
-Always put subtractions at the end of the expression.  
-This is necessary to get correct precedence order.
-
-    let a = b - c + e; // WRONG: c will not subtract e.
-    let a = b + e - c; // RIGHT: c will subtract e.
