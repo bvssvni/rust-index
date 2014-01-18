@@ -1,5 +1,4 @@
-#[link(name="index")];
-#[pkgid = "index#0.1"];
+#[crate_id = "index#0.1"];
 #[crate_type="rlib"];
 
 #[deny(non_camel_case_types)];
@@ -16,87 +15,51 @@ pub enum IndexMatch {
 	FoundLarger(uint)
 }
 
-/// Index is a struct used for doing algebraic set operations.
-/// It contains a hidden vector of the type 'T'.
-/// The items are sorted in ascending order.
-pub struct Index<T> {
-	priv ids: ~[T],
+/// Checks that each item in vector is larger than previous one.
+pub fn check_order<T: Ord>(data: &~[T]) -> bool {
+	!data.windows(2).any(|w| w[0] >= w[1])
 }
 
-impl<T: Clone + Ord + Eq> Index<T> {
-
-	/// Constructs a new Index without checking the order.
-	/// This method takes ownership of the vector.
-	pub fn new(data: ~[T]) -> Index<T> { Index { ids: data } }
-
-	/// Checks that each item in vector is larger than previous one.
-	pub fn check_order(data: &~[T]) -> bool {
-		!data.windows(2).any(|w| w[0] >= w[1])
-	}
-
-	/// Clones the vector.
-	pub fn to_vec(&self) -> ~[T] { self.ids.clone() }
-
-	/// Returns Found(i) if the item was found in the Index.
-	/// Returns FoundNext(i), the index to insert, if the item was not found.
-	/// Worst case performance: O(log(N)).	
-	pub fn index_of(&self, item: &T) -> IndexMatch {
-		let list = &self.ids;
-		let n = list.len() as int;
-		if n == 0 { return FoundLarger(0u); }
-		let mut low: int = 0;
-		let mut high: int = n - 1;
-		while low <= high {
-			let i: int = (low + high) / 2;
-			if list[i] < *item {
-				low = i + 1;
-				continue;
-			}
-			if list[i] > *item {
-				high = i - 1;
-				continue;
-			}	
-
-			return Found(i as uint);
+/// Returns Found(i) if the item was found in the Index.
+/// Returns FoundNext(i), the index to insert, if the item was not found.
+/// Worst case performance: O(log(N)).	
+pub fn index_of<T: Ord>(list: &[T], item: &T) -> IndexMatch {
+	let n = list.len() as int;
+	if n == 0 { return FoundLarger(0u); }
+	let mut low: int = 0;
+	let mut high: int = n - 1;
+	while low <= high {
+		let i: int = (low + high) / 2;
+		if list[i] < *item {
+			low = i + 1;
+			continue;
 		}
+		if list[i] > *item {
+			high = i - 1;
+			continue;
+		}	
 
-		FoundLarger(low as uint)
+		return Found(i as uint);
 	}
 
-	/// Inserts a new item.
-	pub fn insert(&mut self, item: T) -> bool {
-		match self.index_of(&item) {
-			Found(_) => false,
-			FoundLarger(i) => {
-				self.ids.insert(i, item);
-				true
-			},
-		}
+	FoundLarger(low as uint)
+}
+
+/// Inserts a new item.
+pub fn insert<T: Ord>(list: &mut ~[T], item: T) -> bool {
+	use std::vec::OwnedVector;
+
+	match index_of(*list, &item) {
+		Found(_) => false,
+		FoundLarger(i) => {
+			list.insert(i, item);
+			true
+		},
 	}
 }
 
-/// Creates a new Index containing all items from both arguments.
-impl<T: Ord + Eq + Clone> Add<Index<T>, Index<T>> for Index<T> {
-	fn add(&self, rhs: &Index<T>) -> Index<T> {
-		Index { ids: or(self.ids, rhs.ids) }
-	}
-}
-
-/// Creates a new Index containing items from both arguments.
-impl<T: Ord + Eq + Clone> Mul<Index<T>, Index<T>> for Index<T> {
-	fn mul(&self, rhs: &Index<T>) -> Index<T> {
-		Index { ids: and(self.ids, rhs.ids) }
-	}
-}
-
-/// Creates a new Index containing items from the left argument but not the second.
-impl<T: Ord + Eq + Clone> Sub<Index<T>, Index<T>> for Index<T> {
-	fn sub(&self, rhs: &Index<T>) -> Index<T> {
-		Index { ids: except(self.ids, rhs.ids) }
-	}
-}
-
-fn or<T: Ord + Eq + Clone>(a: &[T], b: &[T]) -> ~[T] {
+/// Creates a set containing elements from 'a' and 'b'.
+pub fn or<T: Ord + Eq + Clone>(a: &[T], b: &[T]) -> ~[T] {
 	let mut i = 0;
 	let mut j = 1;
 	let an = a.len();
@@ -140,7 +103,8 @@ fn or<T: Ord + Eq + Clone>(a: &[T], b: &[T]) -> ~[T] {
 	result
 }
 
-fn and<T:Ord+Eq+Clone>(a: &[T], b: &[T]) -> ~[T] {
+/// Creates a set containing elements that are both in 'a' and 'b'.
+pub fn and<T:Ord+Eq+Clone>(a: &[T], b: &[T]) -> ~[T] {
 	let mut i = 0;
 	let mut j = 0;
 	let an = a.len();
@@ -172,7 +136,8 @@ fn and<T:Ord+Eq+Clone>(a: &[T], b: &[T]) -> ~[T] {
 	result
 }
 
-fn except<T:Ord+Eq+Clone>(a: &[T], b: &[T]) -> ~[T] {
+/// Creates a set of elements that are in 'a' but not in 'b'.
+pub fn except<T:Ord+Eq+Clone>(a: &[T], b: &[T]) -> ~[T] {
 	let mut i = 0;
 	let mut j = 0;
 	let an = a.len();
