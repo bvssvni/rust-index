@@ -39,7 +39,7 @@ impl<T: Clone + Ord + Eq> Index<T> {
 
 	/// Returns Found(i) if the item was found in the Index.
 	/// Returns FoundNext(i), the index to insert, if the item was not found.
-	/// Worst case performance: O(N).	
+	/// Worst case performance: O(log(N)).	
 	pub fn index_of(&self, item: &T) -> IndexMatch {
 		let list = &self.ids;
 		let n = list.len() as int;
